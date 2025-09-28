@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'system-ui', sans-serif;
+  }
+  
+  body {
+    background-color: #0E1525;
+    color: #F3EDE4;
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gradient-to-r from-olive to-copper text-off-white px-8 py-4 rounded-2xl font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg;
+  }
+  
+  .card {
+    @apply bg-slate/90 backdrop-blur-sm border border-white/5 rounded-2xl p-6 shadow-card;
+  }
+  
+  .quiz-option {
+    @apply card cursor-pointer transition-all duration-300 hover:scale-105 hover:border-olive/30;
+  }
+  
+  .quiz-option.selected {
+    @apply border-olive/50 bg-olive/10;
+  }
+}
+
