@@ -1,23 +1,33 @@
 import React, { useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Hero from './components/Hero';
+import About from './components/About';
+import Services from './components/Services';
+import Projects from './components/Projects';
+import Contact from './components/Contact';
+import Footer from './components/Footer';
+import Quote from './components/Quote';
 import ErrorBoundary from './components/ErrorBoundary';
 import WaitlistPage from './pages/WaitlistPage';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfUse from './pages/TermsOfUse';
 
 const AppContent: React.FC = () => {
   const projectsRef = useRef<HTMLDivElement>(null);
+  const servicesRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
 
   const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleNavigation = (ref: React.RefObject<HTMLDivElement>) => {
+    scrollToSection(ref);
+  };
+
   return (
     <div className="min-h-screen bg-black text-white">
       <ErrorBoundary>
-        <div style={{ padding: '20px', color: 'green' }}>
-          Testing: App is loading...
-        </div>
         <Routes>
           <Route path="/" element={
             <>
@@ -25,15 +35,23 @@ const AppContent: React.FC = () => {
                 scrollToContact={() => scrollToSection(contactRef)}
                 scrollToProjects={() => scrollToSection(projectsRef)}
               />
-              <div ref={projectsRef} style={{ height: '100vh', backgroundColor: 'blue', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <h1>Projects Section</h1>
-              </div>
-              <div ref={contactRef} style={{ height: '100vh', backgroundColor: 'green', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <h1>Contact Section</h1>
-              </div>
+              <About />
+              <Services scrollToContact={() => scrollToSection(contactRef)} />
+              <Projects scrollToContact={() => scrollToSection(contactRef)} />
+              <Contact />
+              <Footer 
+                scrollToSection={scrollToSection}
+                projectsRef={projectsRef}
+                servicesRef={servicesRef}
+                contactRef={contactRef}
+                handleNavigation={handleNavigation}
+              />
             </>
           } />
           <Route path="/waitlist" element={<WaitlistPage />} />
+          <Route path="/quote" element={<Quote />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-use" element={<TermsOfUse />} />
         </Routes>
       </ErrorBoundary>
     </div>

@@ -1,18 +1,4 @@
-import nodemailer from 'nodemailer';
-
-// Create Gmail transporter for real email delivery
-const createGmailTransporter = () => {
-  return nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: 'mastmigration@gmail.com',
-      pass: process.env.GMAIL_APP_PASSWORD || 'your-app-password-here'
-    }
-  });
-};
-
-// Initialize transporter
-const transporter = createGmailTransporter();
+// Client-side email functionality using Formspree
 
 export const sendContactEmail = async (formData: {
   name: string;
@@ -20,26 +6,34 @@ export const sendContactEmail = async (formData: {
   subject: string;
   message: string;
 }) => {
-  const mailOptions = {
-    from: '"Labmelo Contact Form" <contact@labmelo.com>',
-    to: 'mastmigration@gmail.com',
-    subject: `New Contact Form Submission from ${formData.name}`,
-    html: `
-      <h2>New Contact Form Submission</h2>
-      <p><strong>Name:</strong> ${formData.name}</p>
-      <p><strong>Email:</strong> ${formData.email}</p>
-      <p><strong>Subject:</strong> ${formData.subject}</p>
-      <p><strong>Message:</strong></p>
-      <p>${formData.message}</p>
-    `
-  };
-
   try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log('Email sent successfully:', info.messageId);
-    return { success: true };
+    // Using Formspree webhook for contact form
+    const formDataToSend = new FormData();
+    formDataToSend.append('_replyto', formData.email);
+    formDataToSend.append('_subject', `New Contact Form Submission from ${formData.name}`);
+    formDataToSend.append('message', `
+New Contact Form Submission
+
+Name: ${formData.name}
+Email: ${formData.email}
+Subject: ${formData.subject}
+Message: ${formData.message}
+    `);
+    
+    const response = await fetch('https://formspree.io/f/xnngpdgn', {
+      method: 'POST',
+      body: formDataToSend
+    });
+    
+    if (response.ok) {
+      console.log('Contact email sent successfully');
+      return { success: true };
+    } else {
+      console.error('Failed to send contact email');
+      return { success: false, error: 'Failed to send email' };
+    }
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('Error sending contact email:', error);
     return { success: false, error };
   }
 };
@@ -55,33 +49,39 @@ export const sendQuoteEmail = async (formData: {
   phoneNumber: string;
   email: string;
 }) => {
-  const mailOptions = {
-    from: '"Labmelo Quote Form" <quotes@labmelo.com>',
-    to: 'mastmigration@gmail.com',
-    subject: 'New Quote Request',
-    html: `
-      <h2>New Quote Request</h2>
-      <p><strong>App Type:</strong> ${formData.appType}</p>
-      <p><strong>Completion Date:</strong> ${formData.completionDate}</p>
-      <p><strong>Budget:</strong> ${formData.budget}</p>
-      <p><strong>Features:</strong></p>
-      <ul>
-        ${formData.features.map(feature => `<li>${feature}</li>`).join('')}
-      </ul>
-      <p><strong>Additional Info:</strong> ${formData.additionalInfo}</p>
-      <p><strong>Referral Source:</strong> ${formData.referral}</p>
-      <p><strong>Follow-up Call Requested:</strong> ${formData.followUpCall ? 'Yes' : 'No'}</p>
-      ${formData.followUpCall ? `<p><strong>Phone Number:</strong> ${formData.phoneNumber}</p>` : ''}
-      <p><strong>Contact Email:</strong> ${formData.email}</p>
-    `
-  };
-
   try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log('Email sent successfully:', info.messageId);
-    return { success: true };
+    // Using Formspree webhook for quote form
+    const formDataToSend = new FormData();
+    formDataToSend.append('_replyto', formData.email);
+    formDataToSend.append('_subject', 'New Quote Request');
+    formDataToSend.append('message', `
+New Quote Request
+
+App Type: ${formData.appType}
+Completion Date: ${formData.completionDate}
+Budget: ${formData.budget}
+Features: ${formData.features.join(', ')}
+Additional Info: ${formData.additionalInfo}
+Referral Source: ${formData.referral}
+Follow-up Call Requested: ${formData.followUpCall ? 'Yes' : 'No'}
+${formData.followUpCall ? `Phone Number: ${formData.phoneNumber}` : ''}
+Contact Email: ${formData.email}
+    `);
+    
+    const response = await fetch('https://formspree.io/f/xnngpdgn', {
+      method: 'POST',
+      body: formDataToSend
+    });
+    
+    if (response.ok) {
+      console.log('Quote email sent successfully');
+      return { success: true };
+    } else {
+      console.error('Failed to send quote email');
+      return { success: false, error: 'Failed to send email' };
+    }
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('Error sending quote email:', error);
     return { success: false, error };
   }
-}; 
+};

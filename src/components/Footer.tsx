@@ -72,6 +72,14 @@ const Footer: React.FC<FooterProps> = ({
           </div>
         </div>
         <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
+          <div className="flex justify-center space-x-6 mb-4">
+            <a href="/privacy-policy" className="text-gray-400 hover:text-white transition-colors duration-200">
+              Privacy Policy
+            </a>
+            <a href="/terms-of-use" className="text-gray-400 hover:text-white transition-colors duration-200">
+              Terms of Use
+            </a>
+          </div>
           <p>&copy; {new Date().getFullYear()} Labmelo. All rights reserved.</p>
         </div>
       </div>

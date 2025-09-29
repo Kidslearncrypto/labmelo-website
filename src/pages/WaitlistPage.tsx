@@ -708,7 +708,7 @@ const WaitlistPage: React.FC = () => {
             marginBottom: '16px',
             lineHeight: '1.2'
           }}>
-            Bring Back the Voices You Miss.
+            Bring back<br />the voice you miss.
           </h1>
           <p style={{ 
             color: '#666', 
