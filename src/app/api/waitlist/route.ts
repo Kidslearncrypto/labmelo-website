@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { sendContactEmail } from '@/api/email';
 
 // Simple in-memory storage for demo purposes
 // In production, you'd use a proper database
@@ -31,6 +32,32 @@ export async function POST(request: NextRequest) {
     };
     
     waitlistEmails.push(newEntry);
+
+    // Send email notification to your personal email
+    try {
+      await sendContactEmail({
+        name: 'Waitlist Signup',
+        email: 'waitlist@labmelo.com',
+        subject: `🎉 New Waitlist Signup - ${email}`,
+        message: `
+          <h2>New Waitlist Signup!</h2>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Signup Time:</strong> ${new Date().toLocaleString()}</p>
+          <p><strong>Total Signups:</strong> ${waitlistEmails.length}</p>
+          
+          <h3>Recent Signups:</h3>
+          <ul>
+            ${waitlistEmails.slice(-5).map(entry => 
+              `<li>${entry.email} - ${new Date(entry.timestamp).toLocaleString()}</li>`
+            ).join('')}
+          </ul>
+        `
+      });
+      console.log('Email notification sent to mastmigration@gmail.com');
+    } catch (emailError) {
+      console.error('Failed to send notification email:', emailError);
+      // Don't fail the signup if email fails
+    }
 
     // Log the email (in production, you'd save to database)
     console.log('New waitlist signup:', newEntry);

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { sendWaitlistEmail } from '../api/sendWaitlistEmail';
 
 const WaitlistPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -12,7 +13,17 @@ const WaitlistPage: React.FC = () => {
     setError('');
 
     try {
-      // For now, we'll store in localStorage
+      // Send email notification to mastmigration@gmail.com
+      const result = await sendWaitlistEmail(email);
+      
+      if (!result.success) {
+        console.error('Email sending failed:', result.error);
+        // Still proceed with signup even if email fails
+      } else {
+        console.log('Email notification sent successfully to mastmigration@gmail.com');
+      }
+
+      // Store in localStorage for backup
       const existingEmails = JSON.parse(localStorage.getItem('waitlistEmails') || '[]');
       existingEmails.push({
         email,
@@ -22,6 +33,7 @@ const WaitlistPage: React.FC = () => {
       
       setIsSubmitted(true);
     } catch (err) {
+      console.error('Waitlist signup error:', err);
       setError('Something went wrong. Please try again.');
     } finally {
       setIsSubmitting(false);

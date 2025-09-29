@@ -1,27 +1,18 @@
 import nodemailer from 'nodemailer';
 
-// Create a test account on Ethereal Email
-const createTestAccount = async () => {
-  const testAccount = await nodemailer.createTestAccount();
+// Create Gmail transporter for real email delivery
+const createGmailTransporter = () => {
   return nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
-    port: 587,
-    secure: false,
+    service: 'gmail',
     auth: {
-      user: testAccount.user,
-      pass: testAccount.pass,
-    },
+      user: 'mastmigration@gmail.com',
+      pass: process.env.GMAIL_APP_PASSWORD || 'your-app-password-here'
+    }
   });
 };
 
 // Initialize transporter
-let transporter: nodemailer.Transporter;
-
-// Create test account and transporter
-createTestAccount().then(t => {
-  transporter = t;
-  console.log('Ethereal Email test account created:', t.options.auth);
-});
+const transporter = createGmailTransporter();
 
 export const sendContactEmail = async (formData: {
   name: string;
@@ -31,7 +22,7 @@ export const sendContactEmail = async (formData: {
 }) => {
   const mailOptions = {
     from: '"Labmelo Contact Form" <contact@labmelo.com>',
-    to: 'support@labmelo.com',
+    to: 'mastmigration@gmail.com',
     subject: `New Contact Form Submission from ${formData.name}`,
     html: `
       <h2>New Contact Form Submission</h2>
@@ -45,7 +36,7 @@ export const sendContactEmail = async (formData: {
 
   try {
     const info = await transporter.sendMail(mailOptions);
-    console.log('Preview URL:', nodemailer.getTestMessageUrl(info));
+    console.log('Email sent successfully:', info.messageId);
     return { success: true };
   } catch (error) {
     console.error('Error sending email:', error);
@@ -66,7 +57,7 @@ export const sendQuoteEmail = async (formData: {
 }) => {
   const mailOptions = {
     from: '"Labmelo Quote Form" <quotes@labmelo.com>',
-    to: 'support@labmelo.com',
+    to: 'mastmigration@gmail.com',
     subject: 'New Quote Request',
     html: `
       <h2>New Quote Request</h2>
@@ -87,7 +78,7 @@ export const sendQuoteEmail = async (formData: {
 
   try {
     const info = await transporter.sendMail(mailOptions);
-    console.log('Preview URL:', nodemailer.getTestMessageUrl(info));
+    console.log('Email sent successfully:', info.messageId);
     return { success: true };
   } catch (error) {
     console.error('Error sending email:', error);
