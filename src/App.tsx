@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Hero from './components/Hero';
 import About from './components/About';
@@ -7,6 +7,7 @@ import Projects from './components/Projects';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import Quote from './components/Quote';
+import Header from './components/Header';
 import ErrorBoundary from './components/ErrorBoundary';
 import WaitlistPage from './pages/WaitlistPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -16,6 +17,7 @@ const AppContent: React.FC = () => {
   const projectsRef = useRef<HTMLDivElement>(null);
   const servicesRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' });
@@ -25,12 +27,27 @@ const AppContent: React.FC = () => {
     scrollToSection(ref);
   };
 
+  const openContactModal = () => {
+    // This will be handled by the Contact component
+    scrollToSection(contactRef);
+  };
+
   return (
     <div className="min-h-screen bg-black text-white">
       <ErrorBoundary>
         <Routes>
           <Route path="/" element={
             <>
+              <Header 
+                isMenuOpen={isMenuOpen}
+                setIsMenuOpen={setIsMenuOpen}
+                scrollToSection={scrollToSection}
+                projectsRef={projectsRef}
+                servicesRef={servicesRef}
+                contactRef={contactRef}
+                openContactModal={openContactModal}
+                handleNavigation={handleNavigation}
+              />
               <Hero 
                 scrollToContact={() => scrollToSection(contactRef)}
                 scrollToProjects={() => scrollToSection(projectsRef)}
