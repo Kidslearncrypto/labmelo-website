@@ -84,4 +84,4 @@ const App: React.FC = () => {
 };
 
 export default App;
-// Force deployment - $(date)
+// Force domain recognition - $(date)
